@@ -18,6 +18,7 @@ for example, to align using the minimap2 aligner (https://github.com/lh3/minimap
 ### variations.tsv
 a tab seperated value file with the format specified by SYRI (https://schneebergerlab.github.io/syri/fileformat.html):
 > genomeA_chrom  genomeA_pos  ~  ~  ~  genomeB_chrom  genomeB_pos  ~  ~  region_type  variation_type  ~ 
+
 **region_type** beginning with "SYN" and **variation_type** = "SNP" indicates a SNP in a syntenic region
 
 **genomeA_chrom** and **genomeA_pos** give the coordinates of the SNP in genome A

@@ -1,4 +1,4 @@
-# python3 generatePlots.py recombigator_output_on_UxS_all
+# python3 generatePlots.py recombigator_output_on_X
 
 import os
 import matplotlib.pyplot as plt
@@ -11,11 +11,11 @@ plots_dir = base_dir + "/plots"
 if not os.path.exists(plots_dir):
     os.mkdir(plots_dir)
 
-# Plot 1: Read Lengths
+
+### Plot 1: Read Lengths
 len_dir = base_dir + "/misc/read_lengths"
 readLengths = {}
 
-# print("[Python] reading in read length files")
 # read in all of the read lengths
 filenames = os.listdir(len_dir)
 filenames = sorted(filenames)
@@ -28,11 +28,11 @@ for filename in filenames:
     readLengths[category_name] = lengths
 
 # plot the read lengths
-# print("[Python] plotting read lengths")
-
 fig, axes = plt.subplots(nrows = 1, ncols = 1, figsize = (12, 8))
 
-colors = ['black','darkred', 'firebrick','indianred','forestgreen','olivedrab','fuchsia','orchid','mediumvioletred','lightseagreen']
+# colors = ['black','darkred', 'firebrick','indianred','forestgreen','olivedrab','fuchsia','orchid','mediumvioletred','lightseagreen']
+colors = ['black','darkred', 'firebrick','indianred','forestgreen','olivedrab','fuchsia','orchid','mediumvioletred']
+
 labels = list(readLengths.keys())
 for i, label in enumerate(labels):
     labels[i] = label + " (n = " + str(len(readLengths[label])) + ")"
@@ -46,21 +46,18 @@ axes.set_yscale('log')
 plt.tight_layout()
 plt.savefig(plots_dir + "/sizes_plot.png")
 
-# Plot 2: Crossover positions
 
-# plot the crossover positions along the reads
+### Plot 2: Crossover positions along the reads
 info_dir = base_dir + "/recombinant_info"
 
-# print("[Python] reading in hq info")
-
+# read in all of the information
 hq_info_file = open(info_dir + "/" + "HighQualityRecombinantInfo.tsv", "r")
 hq_info_file.readline()
 hq_breakpoints = [float((line.strip()).split()[3]) for line in hq_info_file.readlines()]
 
 n = len(hq_breakpoints)
 
-# print("[Python] plotting hq crossover positions")
-
+# plot the crossover positions along the reads
 fig, axes = plt.subplots(nrows = 1, ncols = 1, figsize = (12, 8))
 axes.hist(hq_breakpoints, bins = 20, histtype = 'bar', color='green', edgecolor='black')
 axes.set_xlabel("Fraction along SNPs where crossover occurs")

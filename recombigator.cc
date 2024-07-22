@@ -110,7 +110,7 @@ void analyzeReads() {
 
         vector<int> expectedSNPlocations[2];
         vector<bool> genotypeMatrix[2];
-        vector<int> concensusMatrix;
+        vector<int> consensusMatrix;
         int num_gt_switches = -1;
 
         string textoutput;
@@ -183,7 +183,7 @@ void analyzeReads() {
             if(*matrix_it[0] == *matrix_it[1]) {
                 // A) both agree on categorization
                 int SNP_categorization = *matrix_it[0];
-                concensusMatrix.push_back(SNP_categorization);
+                consensusMatrix.push_back(SNP_categorization);
                 if(start_gt == -1)
                     start_gt = SNP_categorization;
                 if(previous_gt != SNP_categorization) {
@@ -196,11 +196,11 @@ void analyzeReads() {
             } else if(*matrix_it[0] == 1 && *matrix_it[1] == 0) {
                 // B) both have a mismatch, ignore this SNP
                 ++numIgnoredSNPs;
-                concensusMatrix.push_back(2);
+                consensusMatrix.push_back(2);
             } else {
                 // C) neither have a mismatch, ignore this SNP
                 ++numIgnoredSNPs;
-                concensusMatrix.push_back(3);
+                consensusMatrix.push_back(3);
             }
             ++matrix_it[0]; ++ matrix_it[1]; ++ index;
         }
@@ -227,13 +227,13 @@ void analyzeReads() {
                 textoutput.append("\t[" + (SNP_symbols[*it]) + "]");
             } textoutput.append("\n");
         }
-        textoutput.append(" **** Concensus Matrix ");
+        textoutput.append(" **** Consensus Matrix ");
         if(genotypeMatrix[0].size() != genotypeMatrix[1].size()) {
             // log_file << "[anomolous case] read " << current_read_name << " has genotype matrixes with different number of SNPs" << endl;
             textoutput.append("(Warning: different GT Matrix sizes)");
         }
         textoutput.append(":");
-        for(auto it = concensusMatrix.begin(); it != concensusMatrix.end(); ++it) {
+        for(auto it = consensusMatrix.begin(); it != consensusMatrix.end(); ++it) {
             textoutput.append("\t" + (SNP_symbols[*it]) + "");
         } textoutput.append("\n");
 
@@ -349,17 +349,22 @@ void printCategorizationResults(double time) {
     long total_reads = 0;
     long total_discarded_reads = 0;
 
+    // Get total reads
+    for(int i = 0; i < NUM_CATEGORIES; i++) {
+        total_reads += num_reads_in_category[i];
+    }
+
     summary << left;
     for(int i = 0; i < NUM_CATEGORIES; i++) {
+        double percentage = 100 * (double) num_reads_in_category[i] / (double) total_reads;
         if(i > CHOMP_CATEGORIES_INDEX) {
             if(i == CHOMP_CATEGORIES_INDEX + 1)
                 summary << endl;
             total_discarded_reads += num_reads_in_category[i];
-            summary << "Total " << setw(16) << (CATEGORY_NAMES[i] + ":") << num_reads_in_category[i] << endl;
+            summary << "Total " << setw(26) << (CATEGORY_NAMES[i] + ":") << setw(12) << num_reads_in_category[i] << fixed << setprecision(3) << percentage << "%"  << endl;
         } else {
-            summary << "Total " << setw(16) << (CATEGORY_NAMES[i] + ":") << num_reads_in_category[i] << endl;
+            summary << "Total " << setw(26) << (CATEGORY_NAMES[i] + ":") << setw(12) << num_reads_in_category[i] << fixed << setprecision(3) << percentage  << "%"  << endl;
         }
-        total_reads += num_reads_in_category[i];
     }
 
     double attrition_rate = (double)total_discarded_reads / (double)total_reads;
